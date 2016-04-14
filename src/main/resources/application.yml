@@ -11,3 +11,6 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     com.kerz: DEBUG
+    
+server:
+  port: 8081

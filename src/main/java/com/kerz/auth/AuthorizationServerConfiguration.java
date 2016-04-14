@@ -13,76 +13,38 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-//  private final Log log = LogFactory.getLog(getClass());
-//  
-//  @Autowired
-//  private TokenStore tokenStore;
 
   @Autowired
   private AuthenticationManager authenticationManager;
 
-//  @Autowired
-//  private UserApprovalHandler userApprovalHandler;
-//  
-//  @Autowired
-//  private ApprovalStore approvalStore;
-//  
-//  @Autowired
-//  private ClientDetailsService clientDetailsService;
+  @Autowired
+  private JwtAccessTokenConverter tokenConverter;
   
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    String[] scopes = {"read", "write"};
+    
     clients
         .inMemory()
         .withClient("web-client-1")
         .authorizedGrantTypes("implicit")
-        .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-        .scopes("read", "write", "trust", "basic")
+        .scopes(scopes)
+        .autoApprove(true)
+        .autoApprove(scopes)
         .accessTokenValiditySeconds(60);
   }
 
   @Override
   public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
     endpoints
-      //.tokenStore(tokenStore)
-      .accessTokenConverter(tokenConverter())
-      //.userApprovalHandler(userApprovalHandler)
+      .accessTokenConverter(tokenConverter)
       .authenticationManager(authenticationManager);
   }
   
   @Bean
   public JwtAccessTokenConverter tokenConverter() {
     final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-    converter.setSigningKey("xxxx");
+    converter.setSigningKey("my-s3cret-signing-key");
     return converter;
   }
-  
-//  @Bean
-//  public JwtTokenStore tokenStore() {
-//    final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-//    jwtAccessTokenConverter.setSigningKey("xxxx");
-//    JwtTokenStore store = new JwtTokenStore(jwtAccessTokenConverter);
-//    store.setApprovalStore(approvalStore);
-//    return store;
-//  }
-//  
-//  @Bean 
-//  @Lazy
-//  @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-//  public UserApprovalHandler userApprovalHandler() throws Exception {
-//    PreApprovingUserApprovalHandler handler = new PreApprovingUserApprovalHandler();
-//    //handler.setApprovalStore(approvalStore());
-//    handler.setApprovalStore(approvalStore);
-//    handler.setRequestFactory(new DefaultOAuth2RequestFactory(clientDetailsService));
-//    handler.setClientDetailsService(clientDetailsService);
-//    handler.setUseApprovalStore(true);
-//    return handler;
-//  }
-//  
-//  @Bean
-//  public ApprovalStore approvalStore() throws Exception {
-//    TokenApprovalStore store = new TokenApprovalStore();
-//    store.setTokenStore(tokenStore);
-//    return store;
-//  }
 }
