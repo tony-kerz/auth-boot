@@ -18,3 +18,5 @@ target/
 code/
 cargo-installs/
 atlassian-ide-plugin.xml
+build/
+.gradle/
