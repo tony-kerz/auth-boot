@@ -44,7 +44,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
   @Bean
   public JwtAccessTokenConverter tokenConverter() {
     final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-    converter.setSigningKey("xxxx");
+    converter.setSigningKey("my-s3cret-signing-key");
     return converter;
   }
 }
