@@ -38,6 +38,8 @@ class UserRepositoryInitializer {
   private final static String ORG = 'org'
   final static String ORG_WRITE = "$ORG:write"
   final static String ORG_READ = "$ORG:read"
+  final static String USER = 'ROLE_USER'
+
 
   String[] vTypes = [
     CustomUser.CLASS_NAME,
@@ -77,7 +79,8 @@ class UserRepositoryInitializer {
         APP_ST_CANCEL,
         APP_ST_NOTIFY,
         PATIENT_CREATE,
-        REFERRAL_WRITE
+        REFERRAL_WRITE,
+        USER
       ]
     )
 

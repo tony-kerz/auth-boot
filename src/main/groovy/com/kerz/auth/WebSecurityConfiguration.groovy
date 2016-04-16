@@ -2,26 +2,29 @@ package com.kerz.auth
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @CompileStatic
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//  @Autowired
-//  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//    auth
-//      .inMemoryAuthentication()
-//      .withUser('user-1')
-//      .password('s3cret')
-//      .roles('USER')
-//  }
+  @Autowired
+  UserDetailsService userDetailsService
+
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    auth
+    .userDetailsService(userDetailsService)
+  }
 
   @Override
   public void configure(WebSecurity web) throws Exception {

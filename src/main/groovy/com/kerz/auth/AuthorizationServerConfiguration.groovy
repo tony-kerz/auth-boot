@@ -1,16 +1,16 @@
 package com.kerz.auth
 
+import com.kerz.auth.dao.UserRepositoryInitializer
+import com.kerz.auth.jwt.CustomTokenConverter
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
+import org.springframework.security.oauth2.provider.token.AccessTokenConverter
 
 @CompileStatic
 @Configuration
@@ -18,13 +18,10 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
   @Autowired
-  AuthenticationManager authenticationManager
+  AccessTokenConverter tokenConverter
 
   @Autowired
-  JwtAccessTokenConverter tokenConverter
-
-  @Autowired
-  UserDetailsService userDetailsService
+  UserRepositoryInitializer userRepositoryInitializer
 
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -44,14 +41,18 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
   void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
     endpoints
       .accessTokenConverter(tokenConverter)
-      .authenticationManager(authenticationManager)
-      .userDetailsService(userDetailsService)
   }
   
   @Bean
-  JwtAccessTokenConverter tokenConverter() {
-    def converter = new JwtAccessTokenConverter()
+  AccessTokenConverter tokenConverter() {
+    def converter = new CustomTokenConverter()
     converter.setSigningKey('my-s3cret-signing-key')
     converter
+  }
+
+  @Bean
+  def initialize() {
+    userRepositoryInitializer.tearDown()
+    userRepositoryInitializer.setUp()
   }
 }
