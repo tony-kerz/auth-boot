@@ -11,6 +11,7 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     com.kerz: DEBUG
+    org.springframework.boot.autoconfigure.security: INFO
     
 server:
   port: 8081
