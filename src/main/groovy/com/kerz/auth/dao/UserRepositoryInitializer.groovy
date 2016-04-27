@@ -1,16 +1,18 @@
 package com.kerz.auth.dao
 
-import com.kerz.auth.domain.CustomUser
+import com.kerz.auth.domain.User
 import com.kerz.auth.domain.Privilege
 import com.tinkerpop.blueprints.Graph
 import com.tinkerpop.blueprints.Vertex
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
 
-import static com.kerz.orient.OrientHelper.asClass
+import static com.kerz.orient.OrientRepository.asClass
 
 @Component
 class UserRepositoryInitializer {
@@ -42,12 +44,12 @@ class UserRepositoryInitializer {
 
 
   String[] vTypes = [
-    CustomUser.CLASS_NAME,
+    User.CLASS_NAME,
     Privilege.CLASS_NAME
   ]
 
   String[] eTypes = [
-    CustomUser.E_HAS_PRIV
+    User.E_HAS_PRIV
   ]
 
   @Resource(name='graph')
@@ -55,6 +57,9 @@ class UserRepositoryInitializer {
 
   @Resource(name='graphNoTx')
   Graph gNoTx
+
+  @Autowired
+  PasswordEncoder passwordEncoder
 
   static Log log = LogFactory.getLog(UserRepositoryInitializer)
 
@@ -73,6 +78,7 @@ class UserRepositoryInitializer {
 
     addUser(
       'st-send-1',
+      's3cret',
       [
         APP_ST,
         APP_ST_OUT,
@@ -113,16 +119,17 @@ class UserRepositoryInitializer {
     g.rollback()
   }
 
-  def addUser(String name, def privNames) {
-    Vertex user = g.addVertex(asClass(CustomUser.CLASS_NAME))
-    user.setProperty(CustomUser.P_NAME, name)
+  def addUser(String name, String password, def privNames) {
+    Vertex user = g.addVertex(asClass(User.CLASS_NAME))
+    user.setProperty(User.P_NAME, name)
+    user.setProperty(User.P_PASSWORD, passwordEncoder.encode(password))
     privNames.each { privName ->
       def priv = g.V('@class', Privilege.CLASS_NAME).has(Privilege.P_NAME, privName)
       if (!priv) {
         priv = g.addVertex(asClass(Privilege.CLASS_NAME))
         priv.setProperty(Privilege.P_NAME, privName)
       }
-      g.addEdge(asClass(CustomUser.E_HAS_PRIV), user, priv, CustomUser.E_HAS_PRIV)
+      g.addEdge(asClass(User.E_HAS_PRIV), user, priv, User.E_HAS_PRIV)
     }
   }
 

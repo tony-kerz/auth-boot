@@ -1,5 +1,6 @@
 package com.kerz.auth.dao
 
+import com.kerz.orient.OrientRepositoryConfiguration
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -13,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import static org.junit.Assert.*
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = [UserRepositoryConfiguration, UserRepositoryImpl, UserRepositoryInitializer])
+@ContextConfiguration(classes = [OrientRepositoryConfiguration, UserRepositoryImpl, UserRepositoryInitializer])
 class UserRepositoryTest {
 
   //Logger log = LoggerFactory.getLogger(UserRepositoryTest)
