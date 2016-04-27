@@ -1,6 +1,6 @@
 package com.kerz.auth.domain
 
 
-class Privilege {
+class HasPrivilege {
   String name
 }

@@ -1,9 +1,8 @@
 package com.kerz.auth.service
 
-import com.kerz.auth.dao.UserRepository
-import com.kerz.auth.dao.UserRepositoryConfiguration
 import com.kerz.auth.dao.UserRepositoryImpl
 import com.kerz.auth.dao.UserRepositoryInitializer
+import com.kerz.orient.OrientRepositoryConfiguration
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,7 +19,7 @@ import static org.junit.Assert.*
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = [
-  UserRepositoryConfiguration,
+  OrientRepositoryConfiguration,
   UserRepositoryImpl,
   UserRepositoryInitializer,
   UserDetailsServiceImpl
